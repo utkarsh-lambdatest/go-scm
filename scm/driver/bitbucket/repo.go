@@ -231,6 +231,10 @@ func convertRepositoryList(from *repositories, permissionMap map[string]*scm.Per
 		convertedRepo := convertRepository(v)
 		convertedRepo.Perm = permissionMap[v.UUID]
 
+		if convertedRepo.Perm == nil {
+			convertedRepo.Perm = new(scm.Perm)
+		}
+
 		fmt.Println(convertedRepo)
 		to = append(to, convertedRepo)
 	}
