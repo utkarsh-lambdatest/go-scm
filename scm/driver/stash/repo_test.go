@@ -267,7 +267,7 @@ func TestRepositoryList(t *testing.T) {
 		File("testdata/repos.json")
 
 	client, _ := New("http://example.com:7990")
-	got, res, err := client.Repositories.List(context.Background(), scm.ListOptions{Page: 3, Size: 25})
+	got, res, err := client.Repositories.List(context.Background(), "", scm.ListOptions{Page: 3, Size: 25})
 	if err != nil {
 		t.Error(err)
 	}

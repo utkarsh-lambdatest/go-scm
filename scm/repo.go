@@ -117,7 +117,7 @@ type (
 		FindPerms(context.Context, string) (*Perm, *Response, error)
 
 		// List returns a list of repositories.
-		List(context.Context, ListOptions) ([]*Repository, *Response, error)
+		List(context.Context, string, ListOptions) ([]*Repository, *Response, error)
 
 		// ListHooks returns a list or repository hooks.
 		ListHooks(context.Context, string, ListOptions) ([]*Hook, *Response, error)

@@ -79,7 +79,7 @@ func TestRepositoryList(t *testing.T) {
 		File("testdata/repos.json")
 
 	client, _ := New("https://try.gogs.io")
-	got, _, err := client.Repositories.List(context.Background(), scm.ListOptions{})
+	got, _, err := client.Repositories.List(context.Background(), "", scm.ListOptions{})
 	if err != nil {
 		t.Error(err)
 	}

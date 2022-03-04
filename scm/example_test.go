@@ -81,7 +81,7 @@ func ExampleRepository_list() {
 		Size: 30,
 	}
 
-	repos, _, err := client.Repositories.List(ctx, opts)
+	repos, _, err := client.Repositories.List(ctx, "", opts)
 	if err != nil {
 		log.Fatal(err)
 	}

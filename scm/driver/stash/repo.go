@@ -157,7 +157,7 @@ func (s *repositoryService) FindPerms(ctx context.Context, repo string) (*scm.Pe
 }
 
 // List returns the user repository list.
-func (s *repositoryService) List(ctx context.Context, opts scm.ListOptions) ([]*scm.Repository, *scm.Response, error) {
+func (s *repositoryService) List(ctx context.Context, orgSlug string, opts scm.ListOptions) ([]*scm.Repository, *scm.Response, error) {
 	path := fmt.Sprintf("rest/api/1.0/repos?%s", encodeListRoleOptions(opts))
 	out := new(repositories)
 	res, err := s.client.do(ctx, "GET", path, nil, &out)
