@@ -225,17 +225,10 @@ func (s *repositoryService) DeleteHook(ctx context.Context, repo string, id stri
 // helper function to convert from the gogs repository list to
 // the common repository structure.
 func convertRepositoryList(from *repositories, permissionMap map[string]*scm.Perm) []*scm.Repository {
-	fmt.Println(permissionMap)
 	to := []*scm.Repository{}
 	for _, v := range from.Values {
 		convertedRepo := convertRepository(v)
 		convertedRepo.Perm = permissionMap[v.UUID]
-
-		if convertedRepo.Perm == nil {
-			convertedRepo.Perm = new(scm.Perm)
-		}
-
-		fmt.Println(convertedRepo)
 		to = append(to, convertedRepo)
 	}
 	return to
