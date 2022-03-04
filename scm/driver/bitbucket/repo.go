@@ -280,7 +280,7 @@ func anonymizeLink(link string) (href string) {
 }
 
 func convertPermissionList(from *permissionList) map[string]*scm.Perm {
-	permissionMap := new(map[string]*scm.Perm)
+	permissionMap := make(map[string]*scm.Perm)
 
 	for _, value := range from.Values {
 		to := new(scm.Perm)
@@ -295,9 +295,9 @@ func convertPermissionList(from *permissionList) map[string]*scm.Perm {
 		default:
 			to.Pull = true
 		}
-		(*permissionMap)[value.Repository.UUID] = to
+		permissionMap[value.Repository.UUID] = to
 	}
-	return (*permissionMap)
+	return permissionMap
 }
 
 func convertPerms(from *perms) *scm.Perm {
