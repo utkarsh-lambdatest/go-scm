@@ -86,10 +86,15 @@ type repositoryService struct {
 
 // Find returns the repository by name.
 func (s *repositoryService) Find(ctx context.Context, repo string) (*scm.Repository, *scm.Response, error) {
+	repoPerm, res, err := s.FindPerms(ctx, repo)
+	if err != nil {
+		return nil, res, err
+	}
+
 	path := fmt.Sprintf("2.0/repositories/%s", repo)
 	out := new(repository)
-	res, err := s.client.do(ctx, "GET", path, nil, out)
-	return convertRepository(out), res, err
+	res, err = s.client.do(ctx, "GET", path, nil, out)
+	return convertRepository(out, repoPerm), res, err
 }
 
 // FindHook returns a repository hook.
@@ -118,9 +123,9 @@ func (s *repositoryService) listPerms(ctx context.Context) (map[string]*scm.Perm
 
 // List returns the user repository list.
 func (s *repositoryService) List(ctx context.Context, workspace string, opts scm.ListOptions) ([]*scm.Repository, *scm.Response, error) {
-	permissionMap, _, err := s.listPerms(ctx)
+	permissionMap, res, err := s.listPerms(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, res, err
 	}
 
 	path := fmt.Sprintf("2.0/repositories/%s?%s", workspace, encodeListRoleOptions(opts))
@@ -128,7 +133,7 @@ func (s *repositoryService) List(ctx context.Context, workspace string, opts scm
 		path = opts.URL
 	}
 	out := new(repositories)
-	res, err := s.client.do(ctx, "GET", path, nil, &out)
+	res, err = s.client.do(ctx, "GET", path, nil, &out)
 	copyPagination(out.pagination, res)
 	return convertRepositoryList(out, permissionMap), res, err
 }
@@ -227,16 +232,14 @@ func (s *repositoryService) DeleteHook(ctx context.Context, repo string, id stri
 func convertRepositoryList(from *repositories, permissionMap map[string]*scm.Perm) []*scm.Repository {
 	to := []*scm.Repository{}
 	for _, v := range from.Values {
-		convertedRepo := convertRepository(v)
-		convertedRepo.Perm = permissionMap[v.UUID]
-		to = append(to, convertedRepo)
+		to = append(to, convertRepository(v, permissionMap[v.UUID]))
 	}
 	return to
 }
 
 // helper function to convert from the gogs repository structure
 // to the common repository structure.
-func convertRepository(from *repository) *scm.Repository {
+func convertRepository(from *repository, repoPerm *scm.Perm) *scm.Repository {
 	namespace, name := scm.Split(from.FullName)
 	return &scm.Repository{
 		ID:        from.UUID,
@@ -247,6 +250,7 @@ func convertRepository(from *repository) *scm.Repository {
 		Private:   from.IsPrivate,
 		CloneSSH:  extractCloneLink(from.Links.Clone, "ssh"),
 		Clone:     anonymizeLink(extractCloneLink(from.Links.Clone, "https", "http")),
+		Perm:      repoPerm,
 		Created:   from.CreatedOn,
 		Updated:   from.UpdatedOn,
 	}
