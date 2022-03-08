@@ -86,14 +86,13 @@ type repositoryService struct {
 
 // Find returns the repository by name.
 func (s *repositoryService) Find(ctx context.Context, repo string) (*scm.Repository, *scm.Response, error) {
-	repoPerm, res, err := s.FindPerms(ctx, repo)
+	path := fmt.Sprintf("2.0/repositories/%s", repo)
+	out := new(repository)
+	res, err := s.client.do(ctx, "GET", path, nil, out)
 	if err != nil {
 		return nil, res, err
 	}
-
-	path := fmt.Sprintf("2.0/repositories/%s", repo)
-	out := new(repository)
-	res, err = s.client.do(ctx, "GET", path, nil, out)
+	repoPerm, _, err := s.FindPerms(ctx, repo)
 	return convertRepository(out, repoPerm), res, err
 }
 

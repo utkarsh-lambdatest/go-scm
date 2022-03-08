@@ -2,9 +2,13 @@
     "ID": "{7dd600e6-0d9c-4801-b967-cb4cc17359ff}",
     "Namespace": "atlassian",
     "Name": "stash-example-plugin",
-    "Perm": null,
+    "Perm": {
+        "Pull": true,
+        "Push": true,
+        "Admin": true
+    },
     "Branch": "master",
-    "Private": true,
+    "Private": false,
     "Clone": "https://bitbucket.org/atlassian/stash-example-plugin.git",
     "CloneSSH": "git@bitbucket.org:atlassian/stash-example-plugin.git",
     "Link": "https://bitbucket.org/atlassian/stash-example-plugin",

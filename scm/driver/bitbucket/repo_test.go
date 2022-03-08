@@ -25,6 +25,13 @@ func TestRepositoryFind(t *testing.T) {
 		Type("application/json").
 		File("testdata/repo.json")
 
+	gock.New("https://api.bitbucket.org").
+		Get("/2.0/user/permissions/repositories").
+		MatchParam("q", `repository.full_name="atlassian/stash-example-plugin"`).
+		Reply(200).
+		Type("application/json").
+		File("testdata/perms.json")
+
 	client, _ := New("https://api.bitbucket.org")
 	got, _, err := client.Repositories.Find(context.Background(), "atlassian/stash-example-plugin")
 	if err != nil {
@@ -50,6 +57,13 @@ func TestRepositoryFind_NotFound(t *testing.T) {
 		Type("application/json").
 		File("testdata/error.json")
 
+	gock.New("https://api.bitbucket.org").
+		Get("/2.0/user/permissions/repositories").
+		MatchParam("q", `repository.full_name="dev/null"`).
+		Reply(404).
+		Type("application/json").
+		File("testdata/perms.json")
+
 	client, _ := New("https://api.bitbucket.org")
 	_, _, err := client.Repositories.Find(context.Background(), "dev/null")
 	if err == nil {
@@ -66,7 +80,7 @@ func TestRepositoryPerms(t *testing.T) {
 
 	gock.New("https://api.bitbucket.org").
 		Get("/2.0/user/permissions/repositories").
-		// MatchParam("repository.full_name", `"atlassian/stash-example-plugin"`).
+		MatchParam("q", `repository.full_name="atlassian/stash-example-plugin"`).
 		Reply(200).
 		Type("application/json").
 		File("testdata/perms.json")
@@ -112,7 +126,13 @@ func TestRepositoryList(t *testing.T) {
 	client, _ := New("https://api.bitbucket.org")
 
 	for {
-		repos, res, err := client.Repositories.List(context.Background(), "", opts)
+		gock.New("https://api.bitbucket.org").
+			Get("/2.0/user/permissions/repositories").
+			Reply(200).
+			Type("application/json").
+			File("testdata/perms.json")
+
+		repos, res, err := client.Repositories.List(context.Background(), "atlassian", opts)
 		if err != nil {
 			t.Error(err)
 		}
