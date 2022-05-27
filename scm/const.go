@@ -159,6 +159,7 @@ const (
 	RoleUndefined Role = iota
 	RoleMember
 	RoleAdmin
+	RoleViewer
 )
 
 // String returns the string representation of Role.
@@ -168,6 +169,8 @@ func (r Role) String() (s string) {
 		return "member"
 	case RoleAdmin:
 		return "admin"
+	case RoleViewer:
+		return "viewer"
 	default:
 		return "unknown"
 	}
