@@ -49,6 +49,7 @@ func (s *userService) ListEmail(ctx context.Context, opts scm.ListOptions) ([]*s
 }
 
 type user struct {
+	ID       int         `json:"ID"`
 	Username string      `json:"username"`
 	Name     string      `json:"name"`
 	Email    null.String `json:"email"`
